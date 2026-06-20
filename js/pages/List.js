@@ -1,7 +1,7 @@
 import { store } from "../main.js";
 import { embed, getYoutubeIdFromUrl } from "../util.js";
 import { score } from "../score.js";
-import { fetchEditors, fetchList } from "../content.js";
+import { fetchEditors, fetchList, fetchUserCountries } from "../content.js";
 
 import Spinner from "../components/Spinner.js";
 
@@ -83,10 +83,10 @@ export default {
                         </div>
                         
                         <div v-if="level.records && level.records.length > 0" class="records-list">
-                            <div v-for="(record, idx) in level.records" :key="idx" class="record-item">
+                            <div v-for="(record, idx) in level.records" :key="idx" class="record-item" :class="{ 'has-flag': countryCode(record.user) }" :style="flagStyle(record.user)">
                                 <span class="record-percent">{{ record.percent }}%</span>
-                                <a :href="record.link" 
-                                   target="_blank" 
+                                <a :href="record.link"
+                                   target="_blank"
                                    class="record-user">{{ record.user }}</a>
                                 <img v-if="record.mobile" class="record-mobile" :src="'/assets/phone-landscape' + (store.dark ? '-dark' : '') + '.svg'" alt="Mobile">
                             </div>
@@ -185,6 +185,7 @@ export default {
         savedScrollPosition: 0,
         activeElements: new Set(),
         activeRuleTab: 'general',
+        countryMap: {},
     }),
     computed: {
         level() {
@@ -212,6 +213,14 @@ export default {
             const rank = this.selected + 1;
             if (!this.level) return 0;
             return score(rank, 100, this.level.percentToQualify);
+        },
+        countryCode(user) {
+            if (!user || !this.countryMap) return null;
+            return this.countryMap[user.toLowerCase()] || null;
+        },
+        flagStyle(user) {
+            const code = this.countryCode(user);
+            return code ? { '--flag-url': `url('https://flagcdn.com/${code}.svg')` } : {};
         },
         isTelegramLink(url) {
             if (!url) return false;
@@ -353,6 +362,16 @@ export default {
         try {
             this.list = await fetchList();
             this.editors = await fetchEditors();
+            const countries = await fetchUserCountries();
+            if (countries && typeof countries === 'object') {
+                const lowered = {};
+                for (const [user, code] of Object.entries(countries)) {
+                    if (typeof user === 'string' && typeof code === 'string') {
+                        lowered[user.toLowerCase()] = code.toLowerCase();
+                    }
+                }
+                this.countryMap = lowered;
+            }
             if (this.list && this.list.length > 0) {
                 if (this.isMobile) this.mobileView = 'list';
                 localStorage.removeItem('selectedLevelIndex');

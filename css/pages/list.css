@@ -404,6 +404,32 @@
     cursor: default;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ===== ФЛАГ-ФОН С GLASS-ЭФФЕКТОМ ===== */
+.record-item.has-flag::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--flag-url, none);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.4;
+    filter: blur(2px) saturate(1.05);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.record-item.has-flag > * {
+    position: relative;
+    z-index: 1;
+}
+
+.record-item.has-flag .record-user {
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65);
 }
 
 .record-item:hover,

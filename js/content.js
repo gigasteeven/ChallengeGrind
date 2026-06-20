@@ -9,6 +9,7 @@ const dir = './data';
 let cachedList = null;
 let cachedLeaderboard = null;
 let cachedEditors = null;
+let cachedUserCountries = null;
 
 export async function fetchList(forceRefresh = false) {
     if (cachedList !== null && !forceRefresh) {
@@ -60,7 +61,7 @@ export async function fetchEditors(forceRefresh = false) {
         console.log('📦 Editors data from cache');
         return cachedEditors;
     }
-    
+
     console.log('🔄 Fetching editors...');
     try {
         const editorsResults = await fetch(`${dir}/_editors.json`);
@@ -68,6 +69,24 @@ export async function fetchEditors(forceRefresh = false) {
         const editors = await editorsResults.json();
         cachedEditors = editors;
         return editors;
+    } catch {
+        return null;
+    }
+}
+
+export async function fetchUserCountries(forceRefresh = false) {
+    if (cachedUserCountries !== null && !forceRefresh) {
+        console.log('📦 User countries data from cache');
+        return cachedUserCountries;
+    }
+
+    console.log('🔄 Fetching user countries...');
+    try {
+        const results = await fetch(`${dir}/_user_countries.json`);
+        if (!results.ok) return null;
+        const countries = await results.json();
+        cachedUserCountries = countries;
+        return countries;
     } catch {
         return null;
     }
@@ -174,4 +193,5 @@ export function clearCache() {
     cachedList = null;
     cachedLeaderboard = null;
     cachedEditors = null;
+    cachedUserCountries = null;
 }

@@ -1,4 +1,4 @@
-import { fetchLeaderboard } from '../content.js';
+import { fetchLeaderboard, fetchUserCountries } from '../content.js';
 import { localize } from '../util.js';
 import Spinner from '../components/Spinner.js';
 
@@ -12,6 +12,7 @@ export default {
         mobileView: 'list',
         isMobile: window.innerWidth <= 768,
         savedScrollPosition: 0,
+        countryMap: {},
     }),
     template: `
         <div v-if="loading" class="page-leaderboard-container" style="display:flex;align-items:center;justify-content:center;height:100%;">
@@ -19,9 +20,10 @@ export default {
         </div>
         <div v-else class="page-leaderboard-container" :class="{ 'mobile-list-view': mobileView === 'list', 'mobile-player-view': mobileView === 'player' }">
             <div class="board-container" v-show="mobileView === 'list'">
-                <div v-for="(ientry, i) in leaderboard" 
-                     :key="ientry.user" 
-                     :class="['board-row', { 'active': selected == i && !isMobile }]" 
+                <div v-for="(ientry, i) in leaderboard"
+                     :key="ientry.user"
+                     :class="['board-row', { 'active': selected == i && !isMobile, 'has-flag': countryCode(ientry.user) }]"
+                     :style="flagStyle(ientry.user)"
                      @click="selectPlayer(i)"
                      @touchstart="onTouchStart($event, i)"
                      @touchend="onTouchEnd($event)"
@@ -46,7 +48,7 @@ export default {
                 </button>
                 
                 <div v-if="entry">
-                    <div class="player-profile-box">
+                    <div class="player-profile-box" :class="{ 'has-flag': countryCode(entry.user) }" :style="flagStyle(entry.user)">
                         <div class="profile-row">
                             <span class="profile-rank">#{{ selected + 1 }}</span>
                             <span class="profile-name">{{ entry.user }}</span>
@@ -96,6 +98,14 @@ export default {
     },
     methods: {
         localize,
+        countryCode(user) {
+            if (!user || !this.countryMap) return null;
+            return this.countryMap[user.toLowerCase()] || null;
+        },
+        flagStyle(user) {
+            const code = this.countryCode(user);
+            return code ? { '--flag-url': `url('https://flagcdn.com/${code}.svg')` } : {};
+        },
         getRankClass(index) {
             if (index === 0) return 'gold';
             if (index === 1) return 'silver';
@@ -193,11 +203,22 @@ export default {
     async mounted() {
         try {
             console.log('Leaderboard mounting...');
-            
+
             const result = await fetchLeaderboard();
             console.log('Leaderboard data:', result);
-            
+
             const [data, err] = result || [[], []];
+
+            const countries = await fetchUserCountries();
+            if (countries && typeof countries === 'object') {
+                const lowered = {};
+                for (const [user, code] of Object.entries(countries)) {
+                    if (typeof user === 'string' && typeof code === 'string') {
+                        lowered[user.toLowerCase()] = code.toLowerCase();
+                    }
+                }
+                this.countryMap = lowered;
+            }
             
             if (data && data.length > 0) {
                 data.forEach(player => {

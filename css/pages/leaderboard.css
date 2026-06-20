@@ -32,6 +32,39 @@
     -webkit-touch-callout: none !important;
     user-select: none !important;
     outline: none !important;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ===== ФЛАГ-ФОН С GLASS-ЭФФЕКТОМ ===== */
+.board-row.has-flag::before,
+.player-profile-box.has-flag::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--flag-url, none);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.4;
+    filter: blur(2px) saturate(1.05);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.board-row.has-flag > *,
+.player-profile-box.has-flag > * {
+    position: relative;
+    z-index: 1;
+}
+
+.board-row.has-flag .user,
+.player-profile-box.has-flag .profile-name {
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65);
+}
+
+.board-row.active.has-flag::before {
+    opacity: 0.15;
 }
 
 /* ===== ПК: ХОВЕР ===== */
@@ -92,6 +125,8 @@
     border-radius: 16px;
     flex-shrink: 0;
     margin-bottom: 0.75rem;
+    position: relative;
+    overflow: hidden;
 }
 
 .profile-row {
