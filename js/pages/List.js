@@ -1,0 +1,311 @@
+import { store } from "../main.js";
+import { embed, getYoutubeIdFromUrl } from "../util.js";
+import { score } from "../score.js";
+import { fetchEditors, fetchList } from "../content.js";
+
+import Spinner from "../components/Spinner.js";
+
+const roleIconMap = {
+    owner: "crown",
+    admin: "user-gear",
+    helper: "user-shield",
+    dev: "code",
+    trial: "user-lock",
+};
+
+export default {
+    components: { Spinner },
+    template: `
+        <div v-if="loading" class="page-list" style="display:flex;align-items:center;justify-content:center;">
+            <Spinner></Spinner>
+        </div>
+        <div v-else class="page-list" :class="{ 'mobile-list-view': mobileView === 'list', 'mobile-level-view': mobileView === 'level' }">
+            <!-- Список уровней -->
+            <div class="list-container" v-show="mobileView === 'list'">
+                <div class="list">
+                    <div v-for="([level, err], i) in list" 
+                         :key="i"
+                         :class="['level-row', { 'active': selected == i && !isMobile, 'error': !level }]"
+                         @click="selectLevel(i)">
+                        <span class="level-rank">
+                            <span v-if="i + 1 <= 150">#{{ i + 1 }}</span>
+                            <span v-else>Legacy</span>
+                        </span>
+                        <span class="level-name">{{ level ? level.name : 'Error (' + err + '.json)' }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Карточка уровня -->
+            <div class="level-container" v-show="mobileView === 'level' || !isMobile">
+                <button class="mobile-back-btn" 
+                        v-if="isMobile" 
+                        @click="goBackToList"
+                        @touchstart="onTouchStart"
+                        @touchend="onTouchEnd"
+                        @touchcancel="onTouchCancel"
+                        @contextmenu="onContextMenu">
+                    <span>←</span> Back to List
+                </button>
+                
+                <div class="level-scroll" v-if="level">
+                    <div class="level-header">
+                        <div class="level-title-wrap">
+                            <span class="level-rank-large" :class="{ 'legacy': currentRankLegacy }">{{ currentRankDisplay }}</span>
+                            <span class="level-title">{{ level.name }}</span>
+                        </div>
+                        <div class="level-publisher" v-if="level.author" :style="isMobile ? 'margin-left: 0.95rem !important; display: block !important;' : ''">by {{ level.author }}</div>
+                    </div>
+                    
+                    <!-- ===== ВИДЕО ИЛИ ПЛАШКА ===== -->
+                    <div v-if="isTelegramLink(level.verification)" class="video-placeholder" @click="openVerificationLink(level.verification)">
+                        <span class="placeholder-text">Watch Verification</span>
+                    </div>
+                    <iframe v-else-if="video" class="video" id="videoframe" :src="video" frameborder="0" allowfullscreen></iframe>
+                    
+                    <ul class="stats">
+                        <li class="stat-points">
+                            <div class="type-title-sm">Points</div>
+                            <p>{{ getPoints() }}</p>
+                        </li>
+                        <li class="stat-id" @click="copyId(level.id)">
+                            <div class="type-title-sm">ID</div>
+                            <p>{{ level.id }}</p>
+                        </li>
+                    </ul>
+                    
+                    <div class="records-wrapper">
+                        <div class="records-header">
+                            <h2>Records</h2>
+                        </div>
+                        
+                        <div v-if="level.records && level.records.length > 0" class="records-list">
+                            <div v-for="(record, idx) in level.records" :key="idx" class="record-item">
+                                <span class="record-percent">{{ record.percent }}%</span>
+                                <a :href="record.link" 
+                                   target="_blank" 
+                                   class="record-user">{{ record.user }}</a>
+                                <img v-if="record.mobile" class="record-mobile" :src="'/assets/phone-landscape' + (store.dark ? '-dark' : '') + '.svg'" alt="Mobile">
+                            </div>
+                        </div>
+                        <p v-else class="no-records">No records yet</p>
+                    </div>
+                </div>
+                <div v-else class="level-scroll" style="height: 100%; display: flex; justify-content: center; align-items: center;">
+                    <p>(ノಠ益ಠ)ノ彡┻━┻</p>
+                </div>
+            </div>
+            
+            <div class="meta-container">
+                <div class="meta">
+                    <div class="errors" v-show="errors.length > 0">
+                        <p class="error" v-for="error of errors">{{ error }}</p>
+                    </div>
+                    
+                    <p>я хз че сюда писать сорри</p>
+                </div>
+            </div>
+        </div>
+    `,
+    data: () => ({
+        list: [],
+        editors: [],
+        loading: true,
+        selected: 0,
+        errors: [],
+        roleIconMap: roleIconMap,
+        store: store,
+        mobileView: 'list',
+        isMobile: window.innerWidth <= 768,
+        savedScrollPosition: 0,
+        activeElements: new Set(),
+    }),
+    computed: {
+        level() {
+            if (!this.list || !this.list[this.selected]) return null;
+            return this.list[this.selected][0];
+        },
+        video() {
+            if (!this.level || !this.level.verification) return '';
+            return embed(this.level.verification);
+        },
+        currentRankDisplay() {
+            const index = this.selected + 1;
+            if (index <= 150) return '#' + index;
+            return 'Legacy';
+        },
+        currentRankLegacy() {
+            return this.selected + 1 > 150;
+        }
+    },
+    methods: {
+        embed,
+        score,
+        getYoutubeIdFromUrl,
+        getPoints() {
+            const rank = this.selected + 1;
+            if (!this.level) return 0;
+            return score(rank, 100, this.level.percentToQualify);
+        },
+        isTelegramLink(url) {
+            if (!url) return false;
+            return url.includes('t.me/') || url.includes('telegram.org');
+        },
+        openVerificationLink(url) {
+            if (url) {
+                window.open(url, '_blank');
+            }
+        },
+        selectLevel(index) {
+            if (this.isMobile) {
+                const container = document.querySelector('.list-container');
+                if (container) this.savedScrollPosition = container.scrollTop;
+            }
+            this.selected = index;
+            if (this.isMobile) {
+                this.mobileView = 'level';
+                localStorage.removeItem('selectedLevelIndex');
+                setTimeout(() => {
+                    const el = document.querySelector('.level-container');
+                    if (el) el.scrollTop = 0;
+                }, 50);
+            } else {
+                setTimeout(() => {
+                    const el = document.querySelector('.level-scroll');
+                    if (el) el.scrollTop = 0;
+                }, 50);
+            }
+        },
+        goBackToList() {
+            this.mobileView = 'list';
+            setTimeout(() => {
+                const container = document.querySelector('.list-container');
+                if (container && this.savedScrollPosition !== undefined) {
+                    container.scrollTop = this.savedScrollPosition;
+                }
+                localStorage.removeItem('selectedLevelIndex');
+            }, 50);
+        },
+        onTouchStart(e) {
+            const el = e.currentTarget;
+            el.classList.add('btn-active');
+            this.activeElements.add(el);
+        },
+        onTouchEnd(e) {
+            const el = e.currentTarget;
+            this.removeFromActive(el);
+        },
+        onTouchCancel(e) {
+            const el = e.currentTarget;
+            this.removeFromActive(el);
+        },
+        onContextMenu(e) {
+            const el = e.currentTarget;
+            this.removeFromActive(el);
+            e.preventDefault();
+        },
+        removeFromActive(el) {
+            if (el && el.classList) {
+                el.classList.remove('btn-active');
+            }
+            this.activeElements.delete(el);
+        },
+        resetAllHighlights() {
+            this.activeElements.forEach(el => {
+                if (el && el.classList) {
+                    el.classList.remove('btn-active');
+                }
+            });
+            this.activeElements.clear();
+        },
+        copyId(id) {
+            if (!id) return;
+            const el = document.querySelector('.stat-id');
+            if (!el) return;
+            const pEl = el.querySelector('p');
+            const originalText = pEl ? pEl.textContent : '';
+            const originalColor = pEl ? pEl.style.color : '';
+            
+            navigator.clipboard.writeText(String(id)).then(() => {
+                el.style.background = 'rgba(74, 222, 128, 0.15)';
+                el.style.borderColor = '#4ade80';
+                if (pEl) {
+                    pEl.textContent = '✓ Copied!';
+                    pEl.style.color = '#4ade80';
+                }
+                setTimeout(() => {
+                    el.style.background = '';
+                    el.style.borderColor = '';
+                    if (pEl) {
+                        pEl.textContent = originalText;
+                        pEl.style.color = originalColor || '';
+                    }
+                }, 800);
+            }).catch(() => {
+                const range = document.createRange();
+                const textNode = pEl ? pEl.firstChild : el;
+                if (textNode) {
+                    range.selectNode(textNode);
+                    window.getSelection().removeAllRanges();
+                    window.getSelection().addRange(range);
+                    document.execCommand('copy');
+                    window.getSelection().removeAllRanges();
+                }
+                el.style.background = 'rgba(74, 222, 128, 0.15)';
+                el.style.borderColor = '#4ade80';
+                if (pEl) {
+                    pEl.textContent = '✓ Copied!';
+                    pEl.style.color = '#4ade80';
+                }
+                setTimeout(() => {
+                    el.style.background = '';
+                    el.style.borderColor = '';
+                    if (pEl) {
+                        pEl.textContent = originalText;
+                        pEl.style.color = originalColor || '';
+                    }
+                }, 800);
+            });
+        },
+        handleResize() {
+            const wasMobile = this.isMobile;
+            this.isMobile = window.innerWidth <= 768;
+            if (wasMobile && !this.isMobile) this.mobileView = 'level';
+            if (!wasMobile && this.isMobile) this.mobileView = 'list';
+        }
+    },
+    async mounted() {
+        try {
+            this.list = await fetchList();
+            this.editors = await fetchEditors();
+            if (this.list && this.list.length > 0) {
+                if (this.isMobile) this.mobileView = 'list';
+                localStorage.removeItem('selectedLevelIndex');
+            }
+            if (!this.list) {
+                this.errors = ["Failed to load list. Retry in a few minutes or notify list staff."];
+            } else {
+                for (let i = 0; i < this.list.length; i++) {
+                    if (this.list[i] && this.list[i][1]) {
+                        this.errors.push("Failed to load level. (" + this.list[i][1] + ".json)");
+                    }
+                }
+                if (!this.editors) this.errors.push("Failed to load list editors.");
+            }
+            window.addEventListener('resize', this.handleResize);
+            
+            document.addEventListener('touchend', this.resetAllHighlights);
+            document.addEventListener('touchcancel', this.resetAllHighlights);
+        } catch (err) {
+            console.error("Error loading data:", err);
+            this.errors.push("Failed to load data. Check console for details.");
+        } finally {
+            this.loading = false;
+        }
+    },
+    beforeUnmount() {
+        window.removeEventListener('resize', this.handleResize);
+        document.removeEventListener('touchend', this.resetAllHighlights);
+        document.removeEventListener('touchcancel', this.resetAllHighlights);
+    }
+};

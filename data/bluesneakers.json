@@ -1,0 +1,24 @@
+{
+    "id": 136226717,
+    "name": "blue sneakers",
+    "author": "VerdantXD",
+    "creators": [],
+    "verifier": "VerdantXD",
+    "verification": "https://youtu.be/TaIraaDZQyo?si=MH703nWHexnwDgyK",
+    "percentToQualify": 100,
+    "password": "Not Copyable",
+    "records": [
+        {
+            "user": "VerdantXD",
+            "link": "https://youtu.be/TaIraaDZQyo?si=MH703nWHexnwDgyK",
+            "percent": 100,
+            "hz": 360
+        },
+        {
+            "user": "ItzTheRealMint",
+            "link": "",
+            "percent": 100,
+            "hz": 360
+        }
+    ]
+}
