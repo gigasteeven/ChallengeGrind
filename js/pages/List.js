@@ -19,9 +19,12 @@ export default {
         <div v-if="loading" class="page-list" style="display:flex;align-items:center;justify-content:center;">
             <Spinner></Spinner>
         </div>
-        <div v-else class="page-list" :class="{ 'mobile-list-view': mobileView === 'list', 'mobile-level-view': mobileView === 'level' }">
+        <div v-else class="page-list" :class="{ 'mobile-list-view': mobileView === 'list', 'mobile-level-view': mobileView === 'level', 'mobile-rules-view': mobileView === 'rules' }">
             <!-- Список уровней -->
             <div class="list-container" v-show="mobileView === 'list'">
+                <button class="mobile-rules-btn" v-if="isMobile" @click="showRules">
+                    <span class="rules-btn-icon">📋</span> Правила
+                </button>
                 <div class="list">
                     <div v-for="([level, err], i) in list" 
                          :key="i"
@@ -96,13 +99,75 @@ export default {
                 </div>
             </div>
             
-            <div class="meta-container">
+            <div class="meta-container" v-show="!isMobile || mobileView === 'rules'">
+                <button class="mobile-back-btn"
+                        v-if="isMobile"
+                        @click="goBackToList"
+                        @touchstart="onTouchStart"
+                        @touchend="onTouchEnd"
+                        @touchcancel="onTouchCancel"
+                        @contextmenu="onContextMenu">
+                    <span>←</span> Back to List
+                </button>
                 <div class="meta">
                     <div class="errors" v-show="errors.length > 0">
                         <p class="error" v-for="error of errors">{{ error }}</p>
                     </div>
-                    
-                    <p>я хз че сюда писать сорри</p>
+
+                    <!-- ===== ПРАВИЛА ===== -->
+                    <div class="rules">
+                        <div class="rules-tabs">
+                            <button class="rules-tab" :class="{ active: activeRuleTab === 'general' }" @click="activeRuleTab = 'general'">Общие правила</button>
+                            <button class="rules-tab" :class="{ active: activeRuleTab === 'submit' }" @click="activeRuleTab = 'submit'">Как предложить уровень?</button>
+                            <button class="rules-tab" :class="{ active: activeRuleTab === 'record' }" @click="activeRuleTab = 'record'">Как отправить рекорд?</button>
+                        </div>
+
+                        <!-- Общие правила -->
+                        <div class="rules-panel" v-show="activeRuleTab === 'general'">
+                            <h3 class="rules-title">Общие правила</h3>
+                            <ol class="rules-list">
+                                <li>Без необоснованной токсичности</li>
+                                <li>Без NSFW / NSFL контента</li>
+                                <li>Не спамить</li>
+                                <li>Не рекламить хуйню</li>
+                            </ol>
+                            <div class="rules-callout">
+                                Все наказания индивидуальны!
+                            </div>
+                        </div>
+
+                        <!-- Как предложить уровень -->
+                        <div class="rules-panel" v-show="activeRuleTab === 'submit'">
+                            <h3 class="rules-title">Как предложить уровень?</h3>
+                            <p class="rules-intro">Пишем администратору листа, кидаем ID уровня вместе с видео-верифом по всем правилам ниже. Ваш уровень обязан соблюдать правила ниже:</p>
+                            <h4 class="rules-subtitle">Правила принятия уровней в челлендж лист:</h4>
+                            <ol class="rules-list">
+                                <li>Ваш уровень должен быть построен участниками нашего сервера и проверен игроком, находящимся тут</li>
+                                <li>Ваш уровень должен быть сложнее <strong>WOBN (135020844)</strong></li>
+                                <li>Ваш уровень должен иметь смотрибельный декор, не созданный целиком с помощью шейдеров</li>
+                                <li>Ваш уровень должен иметь оригинальный декор и геймплей</li>
+                                <li>Длина вашего уровня должна составлять не более 29 секунд в игре (длина Tiny или Short)</li>
+                                <li>Ваш уровень не должен быть полностью невидимым</li>
+                                <li>Ваш уровень не должен более чем на 25% состоять из спамов и более чем на 75% из повторяющихся частей</li>
+                                <li>Ваш уровень должен быть построен в классическом режиме</li>
+                            </ol>
+                            <div class="rules-note">
+                                <span class="rules-note-label">P.S.</span>
+                                Если вы увидели в топе уровень (или может даже не один) который не подходит по какому-то правилу (или может даже не одному!)) то не спешите пинать админов за некомпетентность, ведь скорей всего уровень который вы увидели был добавлен в топ до того, как то или иное правило вступило в силу. Если же уровень был добавлен в топ после создания какого-то правила, значит админ по какой-либо причине сделал исключение из правил, будь то идейность уровня или его сильная аура
+                            </div>
+                        </div>
+
+                        <!-- Как отправить рекорд -->
+                        <div class="rules-panel" v-show="activeRuleTab === 'record'">
+                            <h3 class="rules-title">Как отправить рекорд?</h3>
+                            <p class="rules-intro">Кидаем прохождение в тему ✅Футажи файлом или ссылкой на ютуб/медал и пингуем одного из экспоузеров (<strong>@mirpack19</strong> или <strong>@shadowstrafe</strong>). Если возникнут подозрения, мы можем попросить рау футаж, так что сохраняйте его, при его отсутствии прохождение будет отклонено/удалено</p>
+                            <h4 class="rules-subtitle">Правила принятия рекордов:</h4>
+                            <ol class="rules-list">
+                                <li>Наличие отчетливо слышимых кликов (Click Sounds НЕ являются кликами, и прохождения с ним без кликов будет считаться за кликбот/отсутствие кликов), счетчика кпс и чит индикатора во время попытки/на победном экране обязательно</li>
+                                <li>Если ваш рау футаж содержит личную информацию, обрезаем его/удаляем звук и кидаем оригинальную запись в лс администратору листа вместе со своим ником на сайте…</li>
+                            </ol>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -119,6 +184,7 @@ export default {
         isMobile: window.innerWidth <= 768,
         savedScrollPosition: 0,
         activeElements: new Set(),
+        activeRuleTab: 'general',
     }),
     computed: {
         level() {
@@ -186,6 +252,15 @@ export default {
                 localStorage.removeItem('selectedLevelIndex');
             }, 50);
         },
+        showRules() {
+            const container = document.querySelector('.list-container');
+            if (container) this.savedScrollPosition = container.scrollTop;
+            this.mobileView = 'rules';
+            setTimeout(() => {
+                const el = document.querySelector('.meta-container');
+                if (el) el.scrollTop = 0;
+            }, 50);
+        },
         onTouchStart(e) {
             const el = e.currentTarget;
             el.classList.add('btn-active');
@@ -225,7 +300,7 @@ export default {
             const pEl = el.querySelector('p');
             const originalText = pEl ? pEl.textContent : '';
             const originalColor = pEl ? pEl.style.color : '';
-            
+
             navigator.clipboard.writeText(String(id)).then(() => {
                 el.style.background = 'rgba(74, 222, 128, 0.15)';
                 el.style.borderColor = '#4ade80';
@@ -293,7 +368,7 @@ export default {
                 if (!this.editors) this.errors.push("Failed to load list editors.");
             }
             window.addEventListener('resize', this.handleResize);
-            
+
             document.addEventListener('touchend', this.resetAllHighlights);
             document.addEventListener('touchcancel', this.resetAllHighlights);
         } catch (err) {
