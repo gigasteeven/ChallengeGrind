@@ -1,66 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <title>ChallengeGrind</title>
 
-        <link rel="icon" href="/list_icon.png" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link 
-            href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@500;700&display=swap&unicode-range=U+0400-04FF" 
-            rel="stylesheet" 
-        />
-        <link rel="stylesheet" type="text/css" href="/css/reset.css" />
-        <link rel="stylesheet" type="text/css" href="/css/typography.css" />
-        <link rel="stylesheet" type="text/css" href="/css/main.css" />
-        <link rel="stylesheet" type="text/css" href="/css/pages/list.css" />
-        <link
-            rel="stylesheet"
-            type="text/css"
-            href="/css/pages/leaderboard.css"
-        />
-        <link rel="stylesheet" type="text/css" href="/css/components/nav.css" />
-        <link rel="stylesheet" type="text/css" href="/css/components/btn.css" />
-        <link
-            rel="stylesheet"
-            type="text/css"
-            href="/css/components/tabs.css"
-        />
-        <script src="https://unpkg.com/vue@3.2.31/dist/vue.global.js"></script>
-        <script src="https://unpkg.com/vue-router@4.0.14/dist/vue-router.global.prod.js"></script>
-        <script type="module" src="/js/main.js"></script>
-    </head>
-    <body id="app">
-        <header class="dark">
-            <div class="logo">
-                <img src="/list_icon.png" alt="Logo" class="logo-img" />
-                <h2>ChallengeGrind</h2>
-            </div>
-            <nav class="nav">
-                <a class="nav__tab" :class="{ 'active': $route.path === '/' }" href="#/" data-path="/">
-                    <span class="type-label-lg">List</span>
-                </a>
-                <a class="nav__tab" :class="{ 'active': $route.path === '/leaderboard' }" href="#/leaderboard" data-path="/leaderboard">
-                    <span class="type-label-lg">Leaderboard</span>
-                </a>
-                <div class="nav__actions">
-                    <a class="nav__icon" href="https://discord.gg/G4SdUw94xX" target="_blank">
-                        <img src="/assets/discord.svg" alt="Discord Logo" />
-                    </a>
-                    <a class="nav__icon nav__icon-tg" href="https://t.me/CHALLENGE_GRIND" target="_blank">
-                        <img src="/assets/telegram.svg" alt="Telegram Logo" />
-                    </a>
-                </div>
-            </nav>
-        </header>
-        
-        <div class="mobile-tabs" id="mobileTabs">
-            <a class="mobile-tab" :class="{ 'active': $route.path === '/' }" href="#/" data-path="/">List</a>
-            <a class="mobile-tab" :class="{ 'active': $route.path === '/leaderboard' }" href="#/leaderboard" data-path="/leaderboard">Leaderboard</a>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>ChallengeGrind</title>
+
+    <link rel="icon" href="list_icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@500;700&display=swap&unicode-range=U+0400-04FF"
+        rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="css/reset.css" />
+    <link rel="stylesheet" type="text/css" href="css/typography.css" />
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <link rel="stylesheet" type="text/css" href="css/pages/list.css" />
+    <link rel="stylesheet" type="text/css" href="css/pages/leaderboard.css" />
+    <link rel="stylesheet" type="text/css" href="css/components/nav.css" />
+    <link rel="stylesheet" type="text/css" href="css/components/btn.css" />
+    <link rel="stylesheet" type="text/css" href="css/components/tabs.css" />
+    <script src="https://unpkg.com/vue@3.2.31/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/vue-router@4.0.14/dist/vue-router.global.prod.js"></script>
+    <script type="module" src="js/main.js"></script>
+</head>
+
+<body id="app">
+    <header class="dark">
+        <div class="logo">
+            <img src="list_icon.png" alt="Logo" class="logo-img" />
+            <h2>ChallengeGrind</h2>
         </div>
-        
-        <router-view></router-view>
-    </body>
+        <nav class="nav">
+            <a class="nav__tab" :class="{ 'active': $route.path === '/' }" href="#/" data-path="/">
+                <span class="type-label-lg">List</span>
+            </a>
+            <a class="nav__tab" :class="{ 'active': $route.path === '/leaderboard' }" href="#/leaderboard"
+                data-path="/leaderboard">
+                <span class="type-label-lg">Leaderboard</span>
+            </a>
+            <div class="nav__actions">
+                <a class="nav__icon" href="https://discord.gg/G4SdUw94xX" target="_blank">
+                    <img src="assets/discord.svg" alt="Discord Logo" />
+                </a>
+                <a class="nav__icon nav__icon-tg" href="https://t.me/CHALLENGE_GRIND" target="_blank">
+                    <img src="assets/telegram.svg" alt="Telegram Logo" />
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="mobile-tabs" id="mobileTabs">
+        <a class="mobile-tab" :class="{ 'active': $route.path === '/' }" href="#/" data-path="/">List</a>
+        <a class="mobile-tab" :class="{ 'active': $route.path === '/leaderboard' }" href="#/leaderboard"
+            data-path="/leaderboard">Leaderboard</a>
+    </div>
+
+    <router-view></router-view>
+</body>
+
 </html>
