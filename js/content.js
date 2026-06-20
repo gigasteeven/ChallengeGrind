@@ -3,7 +3,7 @@ import { round, score } from './score.js';
 /**
  * Path to directory containing `_list.json` and all levels
  */
-const dir = '/data';
+const dir = './data';
 
 // ===== КЭШ =====
 let cachedList = null;
