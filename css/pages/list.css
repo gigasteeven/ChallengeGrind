@@ -414,12 +414,12 @@
     position: absolute;
     inset: 0;
     background-image: var(--flag-url, none);
-    background-size: contain;
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-color: rgba(0, 0, 0, 0.25);
-    opacity: 0.4;
-    filter: blur(2px) saturate(1.05);
+    opacity: 0.35;
+    filter: blur(1px) saturate(1.1);
     pointer-events: none;
     z-index: 0;
 }
@@ -950,8 +950,8 @@
     }
 
     .record-item.has-flag::before {
-        opacity: 0.32;
-        filter: blur(1px) saturate(1.05);
+        opacity: 0.3;
+        filter: blur(1px) saturate(1.1);
     }
 
     .record-item:hover,
@@ -1172,8 +1172,8 @@
     }
 
     .record-item.has-flag::before {
-        opacity: 0.32;
-        filter: blur(1px) saturate(1.05);
+        opacity: 0.3;
+        filter: blur(1px) saturate(1.1);
     }
 
     .record-item:hover,

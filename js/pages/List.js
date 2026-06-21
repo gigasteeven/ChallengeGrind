@@ -372,7 +372,8 @@ export default {
                 const lowered = {};
                 for (const [user, code] of Object.entries(countries)) {
                     if (typeof user === 'string' && typeof code === 'string') {
-                        lowered[user.toLowerCase()] = code.toLowerCase();
+                        // Preserve original case for ru: codes (Wikimedia URLs are case-sensitive)
+                        lowered[user.toLowerCase()] = code.startsWith('ru:') ? code : code.toLowerCase();
                     }
                 }
                 this.countryMap = lowered;
