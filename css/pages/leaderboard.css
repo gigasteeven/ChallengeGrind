@@ -43,9 +43,10 @@
     position: absolute;
     inset: 0;
     background-image: var(--flag-url, none);
-    background-size: cover;
+    background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
+    background-color: rgba(0, 0, 0, 0.25);
     opacity: 0.4;
     filter: blur(2px) saturate(1.05);
     pointer-events: none;
@@ -269,7 +270,13 @@
         height: 100% !important;
         width: 100% !important;
     }
-    
+
+    .board-row.has-flag::before,
+    .player-profile-box.has-flag::before {
+        opacity: 0.32;
+        filter: blur(1px) saturate(1.05);
+    }
+
     .page-leaderboard-container .board-container {
         border-radius: 0 !important;
         width: 100% !important;
@@ -509,6 +516,12 @@
     }
     .page-leaderboard-container .board-row {
         padding: 0.4rem 0.5rem;
+    }
+
+    .board-row.has-flag::before,
+    .player-profile-box.has-flag::before {
+        opacity: 0.32;
+        filter: blur(1px) saturate(1.05);
     }
     
     .rank {

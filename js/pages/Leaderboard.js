@@ -104,7 +104,12 @@ export default {
         },
         flagStyle(user) {
             const code = this.countryCode(user);
-            return code ? { '--flag-url': `url('https://flagcdn.com/${code}.svg')` } : {};
+            if (!code) return {};
+            if (code.startsWith('ru:')) {
+                const file = code.slice(3);
+                return { '--flag-url': `url('https://commons.wikimedia.org/wiki/Special:FilePath/${file}')` };
+            }
+            return { '--flag-url': `url('https://flagcdn.com/w640/${code}.png')` };
         },
         getRankClass(index) {
             if (index === 0) return 'gold';
