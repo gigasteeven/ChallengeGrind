@@ -1,0 +1,24 @@
+{
+    "id": 143207371,
+    "name": "Birthday Cake",
+    "author": "NikSupchik",
+    "creators": [],
+    "verifier": "KillerClean",
+    "verification": "https://t.me/CHALLENGE_GRIND/90629/92263",
+    "percentToQualify": 100,
+    "password": "Not Copyable",
+    "records": [
+        {
+            "user": "KillerClean",
+            "link": "https://t.me/CHALLENGE_GRIND/90629/92263",
+            "percent": 100,
+            "hz": 360
+        },
+        {
+            "user": "NikSupchik",
+            "link": "https://t.me/CHALLENGE_GRIND/90629/92788",
+            "percent": 100,
+            "hz": 360
+        }
+    ]
+}
