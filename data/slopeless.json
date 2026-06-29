@@ -3,7 +3,7 @@
     "name": "slopeless",
     "author": "kocMoct",
     "creators": [],
-    "verifier": "",
+    "verifier": "KillerClean",
     "verification": "",
     "percentToQualify": 100,
     "password": "Not Copyable",
@@ -11,6 +11,18 @@
         {
             "user": "KillerClean",
             "link": "https://t.me/CHALLENGE_GRIND/90629/92958",
+            "percent": 100,
+            "hz": 360
+        },
+        {
+            "user": "Triscis",
+            "link": "https://t.me/CHALLENGE_GRIND/90629/98808",
+            "percent": 100,
+            "hz": 360
+        },
+        {
+            "user": "itslafy",
+            "link": "",
             "percent": 100,
             "hz": 360
         }

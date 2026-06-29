@@ -3,13 +3,13 @@
     "name": "blue sneakers",
     "author": "VerdantXD",
     "creators": [],
-    "verifier": "VerdantXD",
+    "verifier": "Velance",
     "verification": "https://youtu.be/TaIraaDZQyo?si=MH703nWHexnwDgyK",
     "percentToQualify": 100,
     "password": "Not Copyable",
     "records": [
         {
-            "user": "VerdantXD",
+            "user": "Velance",
             "link": "https://youtu.be/TaIraaDZQyo?si=MH703nWHexnwDgyK",
             "percent": 100,
             "hz": 360
@@ -23,6 +23,36 @@
         {
             "user": "KillerClean",
             "link": "",
+            "percent": 100,
+            "hz": 360
+        }
+        {
+            "user": "Zern0",
+            "link": "https://t.me/CHALLENGE_GRIND/90629/97350",
+            "percent": 100,
+            "hz": 360
+        },
+        {
+            "user": "Triscis",
+            "link": "https://t.me/CHALLENGE_GRIND/90629/97541",
+            "percent": 100,
+            "hz": 360
+        },
+        {
+            "user": "itslafy",
+            "link": "https://t.me/CHALLENGE_GRIND/90629/97593",
+            "percent": 100,
+            "hz": 360
+        },
+        {
+            "user": "Kunakov",
+            "link": "https://t.me/CHALLENGE_GRIND/90629/97605",
+            "percent": 100,
+            "hz": 360
+        },
+        {
+            "user": "pexa2280",
+            "link": "https://t.me/CHALLENGE_GRIND/90629/98472",
             "percent": 100,
             "hz": 360
         }
